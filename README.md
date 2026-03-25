@@ -47,7 +47,7 @@ Notes:
 - `TICKSTER_ORGANIZER_NAME` is required. Without it, the import should not run.
 - The current setup uses the same Tickster API key for both `TICKSTER_DUMP_API_KEY` and `TICKSTER_EVENT_API_KEY`.
 - Default values already baked into the code:
-  Sanity project id `c88v6s6j`, dataset `production`, language `sv`.
+  Sanity project id `c89v5s0j`, dataset `production`, language `sv`.
 
 ## Use In An Existing Sanity Project
 
