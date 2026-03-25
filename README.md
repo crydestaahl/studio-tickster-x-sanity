@@ -10,6 +10,18 @@ This project focuses on one thing:
 
 It does not include a frontend. The intent is that you copy the Tickster-specific schema and sync files into an existing Sanity project.
 
+## What This Starter Is
+
+This is a manual starter, not a fully automated integration.
+
+That means:
+
+- nothing runs by itself after installation
+- Tickster imports and updates only happen when you run the provided scripts
+- it is meant to be a clean foundation that you can build on inside your own project
+
+If you want full automation later, this starter is the first step. You can add scheduled execution on top of the existing scripts using a cron job, GitHub Actions, Vercel/Netlify scheduled jobs, or a separate backend worker.
+
 ## What Is Included
 
 - `schemaTypes/tickster/`
