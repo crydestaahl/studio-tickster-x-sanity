@@ -10,6 +10,7 @@ export function createSanityWriteClient(config) {
     apiVersion: config.apiVersion,
     token: config.token,
     useCdn: false,
+    perspective: 'raw',
   })
 }
 
@@ -46,17 +47,28 @@ export async function getSyncState(client) {
 
 export async function getExistingEventMetadata(client, organizerId) {
   const docs = await client.fetch(
-    `*[_type == "ticksterEvent" && organizer.id == $organizerId]{
+    `*[_type == "ticksterEvent"]{
       _id,
       ticksterEventId,
-      lastUpdatedUtc
+      lastUpdatedUtc,
+      "organizerId": organizer.id
     }`,
-    {organizerId},
   )
 
   const byEventId = new Map()
+  let matchingOrganizerCount = 0
+  let mismatchedOrganizerCount = 0
+  let missingOrganizerCount = 0
 
   for (const doc of docs) {
+    if (doc.organizerId === organizerId) {
+      matchingOrganizerCount += 1
+    } else if (doc.organizerId) {
+      mismatchedOrganizerCount += 1
+    } else {
+      missingOrganizerCount += 1
+    }
+
     const current = byEventId.get(doc.ticksterEventId)
     const isDraft = typeof doc._id === 'string' && doc._id.startsWith(DRAFTS_PREFIX)
 
@@ -65,7 +77,13 @@ export async function getExistingEventMetadata(client, organizerId) {
     }
   }
 
-  return byEventId
+  return {
+    byEventId,
+    totalCount: docs.length,
+    matchingOrganizerCount,
+    mismatchedOrganizerCount,
+    missingOrganizerCount,
+  }
 }
 
 export async function saveSyncState(client, fields) {
