@@ -11,13 +11,19 @@ This studio contains a `ticksterEvent` document type plus two sync scripts:
 
 ## Environment variables
 
-Create a local `.env` file in the repo root:
+Create a local `.env` file for your machine only. The file is ignored by git and must not be committed.
 
 ```bash
 SANITY_API_TOKEN=your_sanity_write_token
 TICKSTER_ORGANIZER_NAME=Pustervik
 TICKSTER_DUMP_API_KEY=your_tickster_dump_api_key
 TICKSTER_EVENT_API_KEY=your_event_api_key
+```
+
+There is a safe example file you can commit and share in the repo:
+
+```bash
+.env.example
 ```
 
 In the current setup, the same Tickster API key is used for both:
