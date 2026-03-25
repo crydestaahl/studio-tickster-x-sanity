@@ -1,5 +1,8 @@
-import 'dotenv/config'
+import dotenv from 'dotenv'
 import {defineCliConfig} from 'sanity/cli'
+
+dotenv.config()
+dotenv.config({path: '../.env', override: false})
 
 const projectId = process.env.SANITY_PROJECT_ID
 const dataset = process.env.SANITY_DATASET

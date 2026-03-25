@@ -1,9 +1,12 @@
-import 'dotenv/config'
+import dotenv from 'dotenv'
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {deskStructure} from './deskStructure'
 import {schemaTypes} from './schemaTypes'
+
+dotenv.config()
+dotenv.config({path: '../.env', override: false})
 
 const projectId = process.env.SANITY_PROJECT_ID
 const dataset = process.env.SANITY_DATASET

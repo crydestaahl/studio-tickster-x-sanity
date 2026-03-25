@@ -2,13 +2,13 @@
 
 Minimal starter for organizers that use Tickster and Sanity.
 
-This project focuses on one thing:
+This starter focuses on one thing:
 
 - import upcoming events for one organizer from Tickster into Sanity
 - keep them updated over time
 - store them as drafts so editors decide what gets published
 
-It does not include a frontend. The intent is that you copy the Tickster-specific schema and sync files into an existing Sanity project.
+It is intended as a clean base that you can copy into an existing Sanity project and build on further.
 
 ## What This Starter Is
 
@@ -18,9 +18,9 @@ That means:
 
 - nothing runs by itself after installation
 - Tickster imports and updates only happen when you run the provided scripts
-- it is meant to be a clean foundation that you can build on inside your own project
+- it is meant to be a clean foundation that you can extend inside your own project
 
-If you want full automation later, this starter is the first step. You can add scheduled execution on top of the existing scripts using a cron job, GitHub Actions, Vercel/Netlify scheduled jobs, or a separate backend worker.
+If you want full automation later, this starter is the first step. You can add scheduled execution on top of the existing scripts using a cron job, GitHub Actions, scheduled platform jobs, or a separate backend worker.
 
 ## What Is Included
 
@@ -30,6 +30,8 @@ If you want full automation later, this starter is the first step. You can add s
   Import, sync, publish-all, and unpublish-to-drafts scripts.
 - `.env.example`
   Safe example of the environment variables you need.
+- `deskStructure.ts`
+  Optional desk structure entries for Tickster content in Studio.
 
 ## Environment Variables
 
@@ -46,16 +48,12 @@ TICKSTER_EVENT_API_KEY=your_tickster_api_key
 
 Notes:
 
+- `SANITY_PROJECT_ID` is required.
+- `SANITY_DATASET` is required.
 - `TICKSTER_ORGANIZER_NAME` is required. Without it, the import should not run.
-- `SANITY_PROJECT_ID` and `SANITY_DATASET` are required. This starter should not point to a prefilled Sanity project.
 - The current setup uses the same Tickster API key for both `TICKSTER_DUMP_API_KEY` and `TICKSTER_EVENT_API_KEY`.
-<<<<<<< HEAD
 - Default value already baked into the code:
   language `sv`.
-=======
-- Default values already baked into the code:
-  Sanity project id `c89v5s0j`, dataset `production`, language `sv`.
->>>>>>> cbed9d8ba88b6197d5388e57599a6dc7d0acd7ec
 
 ## Use In An Existing Sanity Project
 
@@ -63,7 +61,7 @@ Copy these parts into your project:
 
 - `schemaTypes/tickster/`
 - `scripts/tickster/`
-- the Tickster items from `deskStructure.ts` if you want the same studio navigation
+- the Tickster items from `deskStructure.ts` if you want the same Studio navigation
 - the Tickster env vars from `.env.example`
 
 Then register the schema types from `schemaTypes/tickster/index.ts` in your own `schemaTypes/index.ts`.
