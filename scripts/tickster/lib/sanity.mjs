@@ -35,11 +35,37 @@ export async function getSyncState(client) {
         latestDumpId,
         latestDumpCreatedAt,
         lastFullImportAt,
-        lastIncrementalSyncAt
+        lastIncrementalSyncAt,
+        lastRequestCount,
+        lastDeferredCount
       }`,
       {id: SYNC_STATE_ID},
     )) ?? null
   )
+}
+
+export async function getExistingEventMetadata(client, organizerId) {
+  const docs = await client.fetch(
+    `*[_type == "ticksterEvent" && organizer.id == $organizerId]{
+      _id,
+      ticksterEventId,
+      lastUpdatedUtc
+    }`,
+    {organizerId},
+  )
+
+  const byEventId = new Map()
+
+  for (const doc of docs) {
+    const current = byEventId.get(doc.ticksterEventId)
+    const isDraft = typeof doc._id === 'string' && doc._id.startsWith(DRAFTS_PREFIX)
+
+    if (!current || isDraft) {
+      byEventId.set(doc.ticksterEventId, doc)
+    }
+  }
+
+  return byEventId
 }
 
 export async function saveSyncState(client, fields) {

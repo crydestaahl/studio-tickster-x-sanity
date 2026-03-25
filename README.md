@@ -44,6 +44,7 @@ SANITY_API_TOKEN=your_sanity_write_token
 TICKSTER_ORGANIZER_NAME=Pustervik
 TICKSTER_DUMP_API_KEY=your_tickster_api_key
 TICKSTER_EVENT_API_KEY=your_tickster_api_key
+TICKSTER_EVENT_API_REQUEST_LIMIT=180
 ```
 
 Notes:
@@ -52,6 +53,7 @@ Notes:
 - `SANITY_DATASET` is required.
 - `TICKSTER_ORGANIZER_NAME` is required. Without it, the import should not run.
 - The current setup uses the same Tickster API key for both `TICKSTER_DUMP_API_KEY` and `TICKSTER_EVENT_API_KEY`.
+- `TICKSTER_EVENT_API_REQUEST_LIMIT` is optional. Default is `180` to stay below Tickster's limit of `200` requests per hour.
 - Default value already baked into the code:
   language `sv`.
 
@@ -88,6 +90,13 @@ Hourly update against Event API v1:
 ```bash
 npm run tickster:sync-updates
 ```
+
+The update flow is optimized to reduce API usage:
+
+- it first fetches the organizer event list
+- it compares `lastUpdatedUtc` from Tickster with the stored value in Sanity
+- it only fetches event details for new or changed events
+- it stops fetching more details when it reaches the configured request budget for the run
 
 Publish all imported Tickster event drafts:
 

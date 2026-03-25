@@ -2,6 +2,7 @@ import {getConfig, getEventApiHeaders} from './lib/config.mjs'
 import {
   archiveMissingEvents,
   createSanityWriteClient,
+  getExistingEventMetadata,
   getSyncState,
   saveSyncError,
   saveSyncState,
@@ -26,14 +27,33 @@ async function main() {
     ...getEventApiHeaders(config.tickster),
   }
 
-  const organizerEvents = await fetchOrganizerEvents(config.tickster, syncState.organizerId, headers)
+  const {items: organizerEvents, requestCount: listRequestCount} = await fetchOrganizerEvents(
+    config.tickster,
+    syncState.organizerId,
+    headers,
+  )
   const timestamp = new Date().toISOString()
   const activeEventIds = new Set(organizerEvents.map((event) => event.id))
+  const existingEvents = await getExistingEventMetadata(sanityClient, syncState.organizerId)
+  const requestBudget = Math.max(config.tickster.eventApiRequestLimit - listRequestCount, 0)
 
   const docs = []
+  let detailRequestCount = 0
+  let deferredCount = 0
 
-  for (const organizerEvent of organizerEvents) {
+  const changedOrNewEvents = organizerEvents.filter((organizerEvent) => {
+    const existing = existingEvents.get(organizerEvent.id)
+    return !existing || existing.lastUpdatedUtc !== organizerEvent.lastUpdatedUtc
+  })
+
+  for (const organizerEvent of changedOrNewEvents) {
+    if (detailRequestCount >= requestBudget) {
+      deferredCount += 1
+      continue
+    }
+
     const eventDetails = await fetchEventDetails(config.tickster, organizerEvent.id, headers)
+    detailRequestCount += 1
     docs.push(mapDetailEventToSanityDocument(eventDetails, timestamp))
   }
 
@@ -51,10 +71,14 @@ async function main() {
     lastIncrementalSyncAt: timestamp,
     lastIncrementalSyncCount: docs.length,
     lastArchivedCount: archivedCount,
+    lastRequestCount: listRequestCount + detailRequestCount,
+    lastDeferredCount: deferredCount,
     lastError: null,
   })
 
-  console.log(`Updated ${docs.length} events and archived ${archivedCount} events.`)
+  console.log(
+    `Updated ${docs.length} events, archived ${archivedCount} events, used ${listRequestCount + detailRequestCount} requests, deferred ${deferredCount} changed events.`,
+  )
 }
 
 main().catch(async (error) => {

@@ -36,6 +36,18 @@ export const ticksterSyncStateType = defineType({
       type: 'number',
       readOnly: true,
     }),
+    defineField({
+      name: 'lastRequestCount',
+      title: 'Last Request Count',
+      type: 'number',
+      readOnly: true,
+    }),
+    defineField({
+      name: 'lastDeferredCount',
+      title: 'Last Deferred Count',
+      type: 'number',
+      readOnly: true,
+    }),
     defineField({name: 'lastError', title: 'Last Error', type: 'text', readOnly: true}),
   ],
   preview: {

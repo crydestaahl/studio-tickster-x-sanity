@@ -38,6 +38,7 @@ export function getConfig() {
       dumpApiKey: readRequired('TICKSTER_DUMP_API_KEY'),
       eventApiBaseUrl: process.env.TICKSTER_EVENT_API_BASE_URL ?? 'https://event.api.tickster.com',
       dumpApiBaseUrl: process.env.TICKSTER_DUMP_API_BASE_URL ?? 'https://api.tickster.com',
+      eventApiRequestLimit: Number(process.env.TICKSTER_EVENT_API_REQUEST_LIMIT ?? '180'),
       eventApiBearerToken: process.env.TICKSTER_EVENT_API_BEARER_TOKEN,
       eventApiHeaderName: process.env.TICKSTER_EVENT_API_HEADER_NAME,
       eventApiHeaderValue: process.env.TICKSTER_EVENT_API_HEADER_VALUE,

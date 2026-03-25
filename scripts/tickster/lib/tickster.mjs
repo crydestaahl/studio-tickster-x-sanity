@@ -47,6 +47,7 @@ export function filterDumpEventsByOrganizer(dump, organizerId) {
 export async function fetchOrganizerEvents(config, organizerId, headers) {
   const items = []
   let skip = 0
+  let requestCount = 0
 
   while (true) {
     const url = new URL(
@@ -57,6 +58,7 @@ export async function fetchOrganizerEvents(config, organizerId, headers) {
     url.searchParams.set('skip', String(skip))
 
     const payload = await fetchJson(url, {headers})
+    requestCount += 1
     items.push(...payload.items)
 
     if (items.length >= payload.totalItems || payload.items.length === 0) {
@@ -66,7 +68,7 @@ export async function fetchOrganizerEvents(config, organizerId, headers) {
     skip += payload.items.length
   }
 
-  return items
+  return {items, requestCount}
 }
 
 export async function fetchEventDetails(config, eventId, headers) {
