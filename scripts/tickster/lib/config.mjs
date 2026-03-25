@@ -15,8 +15,6 @@ for (const envPath of envCandidates) {
   }
 }
 
-const DEFAULT_PROJECT_ID = 'c88v6s6j'
-const DEFAULT_DATASET = 'production'
 function readRequired(name) {
   const value = process.env[name]
   if (!value) {
@@ -29,8 +27,8 @@ function readRequired(name) {
 export function getConfig() {
   return {
     sanity: {
-      projectId: process.env.SANITY_PROJECT_ID ?? DEFAULT_PROJECT_ID,
-      dataset: process.env.SANITY_DATASET ?? DEFAULT_DATASET,
+      projectId: readRequired('SANITY_PROJECT_ID'),
+      dataset: readRequired('SANITY_DATASET'),
       apiVersion: process.env.SANITY_API_VERSION ?? '2025-03-01',
       token: readRequired('SANITY_API_TOKEN'),
     },

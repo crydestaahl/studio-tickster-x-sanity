@@ -36,6 +36,8 @@ If you want full automation later, this starter is the first step. You can add s
 Create a local `.env` file for your machine only. Do not commit it.
 
 ```bash
+SANITY_PROJECT_ID=your_sanity_project_id
+SANITY_DATASET=production
 SANITY_API_TOKEN=your_sanity_write_token
 TICKSTER_ORGANIZER_NAME=Pustervik
 TICKSTER_DUMP_API_KEY=your_tickster_api_key
@@ -45,9 +47,10 @@ TICKSTER_EVENT_API_KEY=your_tickster_api_key
 Notes:
 
 - `TICKSTER_ORGANIZER_NAME` is required. Without it, the import should not run.
+- `SANITY_PROJECT_ID` and `SANITY_DATASET` are required. This starter should not point to a prefilled Sanity project.
 - The current setup uses the same Tickster API key for both `TICKSTER_DUMP_API_KEY` and `TICKSTER_EVENT_API_KEY`.
-- Default values already baked into the code:
-  Sanity project id `c88v6s6j`, dataset `production`, language `sv`.
+- Default value already baked into the code:
+  language `sv`.
 
 ## Use In An Existing Sanity Project
 

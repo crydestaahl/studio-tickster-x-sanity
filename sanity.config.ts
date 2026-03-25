@@ -1,15 +1,27 @@
+import 'dotenv/config'
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {deskStructure} from './deskStructure'
 import {schemaTypes} from './schemaTypes'
 
+const projectId = process.env.SANITY_PROJECT_ID
+const dataset = process.env.SANITY_DATASET
+
+if (!projectId) {
+  throw new Error('Missing required environment variable: SANITY_PROJECT_ID')
+}
+
+if (!dataset) {
+  throw new Error('Missing required environment variable: SANITY_DATASET')
+}
+
 export default defineConfig({
   name: 'default',
   title: 'Tickster x Sanity',
 
-  projectId: 'c88v6s6j',
-  dataset: 'production',
+  projectId,
+  dataset,
 
   plugins: [structureTool({structure: deskStructure}), visionTool()],
 
