@@ -9,13 +9,25 @@
     "deploy": "sanity deploy",
     "deploy-graphql": "sanity graphql deploy",
     "dev": "sanity dev",
-    "start": "sanity start"
+    "start": "sanity start",
+    "web:dev": "next dev",
+    "web:build": "next build",
+    "web:start": "next start",
+    "tickster:import-dump": "node ./scripts/import-dump.mjs",
+    "tickster:sync-updates": "node ./scripts/sync-updates.mjs",
+    "tickster:publish-all-events": "node ./scripts/publish-all-events.mjs",
+    "tickster:move-published-to-drafts": "node ./scripts/move-published-events-to-drafts.mjs"
   },
   "keywords": [
     "sanity"
   ],
   "dependencies": {
+    "@portabletext/react": "^6.0.3",
+    "@sanity/client": "^7.20.0",
+    "@sanity/image-url": "^2.0.3",
     "@sanity/vision": "^5.18.0",
+    "dotenv": "^17.3.1",
+    "next": "^16.2.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "sanity": "^5.18.0",
