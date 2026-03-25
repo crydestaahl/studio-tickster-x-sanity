@@ -5,9 +5,6 @@ export const deskStructure: StructureResolver = (S) =>
     .title('Content')
     .items([
       S.listItem()
-        .title('Home Page')
-        .child(S.document().schemaType('homePage').documentId('homePage')),
-      S.listItem()
         .title('Tickster Events')
         .schemaType('ticksterEvent')
         .child(

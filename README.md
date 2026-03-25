@@ -1,91 +1,113 @@
-# Tickster x Sanity
+# Tickster x Sanity Starter
 
-This studio contains a `ticksterEvent` document type plus two sync scripts:
+Minimal starter for organizers that use Tickster and Sanity.
 
-- `npm run tickster:import-dump`
-  Imports the latest Tickster event dump, resolves the organizer named `Pustervik`, and upserts all matching events into Sanity.
-- `npm run tickster:sync-updates`
-  Fetches the organizer's current upcoming events from Tickster Event API v1, loads full event details per event id, updates existing Sanity documents, and archives events that are no longer upcoming.
-- `npm run web:dev`
-  Starts the Next.js frontend that renders the homepage welcome section first and the Tickster event list directly below it.
+This project focuses on one thing:
 
-## Environment variables
+- import upcoming events for one organizer from Tickster into Sanity
+- keep them updated over time
+- store them as drafts so editors decide what gets published
 
-Create a local `.env` file for your machine only. The file is ignored by git and must not be committed.
+It does not include a frontend. The intent is that you copy the Tickster-specific schema and sync files into an existing Sanity project.
+
+## What Is Included
+
+- `schemaTypes/tickster/`
+  Tickster event schema and sync state schema.
+- `scripts/tickster/`
+  Import, sync, publish-all, and unpublish-to-drafts scripts.
+- `.env.example`
+  Safe example of the environment variables you need.
+
+## Environment Variables
+
+Create a local `.env` file for your machine only. Do not commit it.
 
 ```bash
 SANITY_API_TOKEN=your_sanity_write_token
 TICKSTER_ORGANIZER_NAME=Pustervik
-TICKSTER_DUMP_API_KEY=your_tickster_dump_api_key
-TICKSTER_EVENT_API_KEY=your_event_api_key
+TICKSTER_DUMP_API_KEY=your_tickster_api_key
+TICKSTER_EVENT_API_KEY=your_tickster_api_key
 ```
 
-There is a safe example file you can commit and share in the repo:
+Notes:
 
-```bash
-.env.example
-```
+- `TICKSTER_ORGANIZER_NAME` is required. Without it, the import should not run.
+- The current setup uses the same Tickster API key for both `TICKSTER_DUMP_API_KEY` and `TICKSTER_EVENT_API_KEY`.
+- Default values already baked into the code:
+  Sanity project id `c88v6s6j`, dataset `production`, language `sv`.
 
-In the current setup, the same Tickster API key is used for both:
+## Use In An Existing Sanity Project
 
-- `TICKSTER_DUMP_API_KEY`
-- `TICKSTER_EVENT_API_KEY`
+Copy these parts into your project:
 
-Defaults already baked into the code:
+- `schemaTypes/tickster/`
+- `scripts/tickster/`
+- the Tickster items from `deskStructure.ts` if you want the same studio navigation
+- the Tickster env vars from `.env.example`
 
-- Sanity project id: `c88v7s2i`
-- Sanity dataset: `production`
-- Language: `sv`
+Then register the schema types from `schemaTypes/tickster/index.ts` in your own `schemaTypes/index.ts`.
 
-## First import
+## Studio Structure
 
-Run the dump import once:
+The included desk structure exposes:
+
+- `Tickster Events`
+- `Tickster Sync State`
+
+If your project already has a custom desk structure, merge these items into it instead of replacing the whole file.
+
+## Commands
+
+First import from the latest dump:
 
 ```bash
 npm run tickster:import-dump
 ```
 
-This stores:
-
-- one `ticksterEvent` document per Tickster event
-- one `ticksterSyncState` document with the resolved organizer id, latest dump id, and sync timestamps
-
-## Hourly updates
-
-Run the incremental update on a schedule:
+Hourly update against Event API v1:
 
 ```bash
 npm run tickster:sync-updates
 ```
 
-Recommended flow:
-
-1. Run `tickster:import-dump` once when a new dump is published.
-2. Run `tickster:sync-updates` every hour.
-
-The Tickster dump documentation says new dumps are published around 07:00 UTC and recommends waiting roughly one extra hour before consuming the new file.
-
-## Studio structure
-
-The desk now contains:
-
-- `Home Page`: singleton for the content shown in the welcome section on the frontend
-- `Tickster Events`: the event list shown in the CMS
-- `Tickster Sync State`: a single document holding import/update state
-
-## Frontend
-
-The frontend is built with Next.js in the same project folder.
-
-Run it locally with:
+Publish all imported Tickster event drafts:
 
 ```bash
-npm run web:dev
+npm run tickster:publish-all-events
 ```
 
-Then open `http://localhost:3000`.
+Move published Tickster events back to drafts:
 
-The front page reads:
+```bash
+npm run tickster:move-published-to-drafts
+```
 
-- the `Home Page` singleton for the welcome section
-- the active `Tickster Events` documents for the event list directly after the welcome section
+## Draft / Publish Workflow
+
+Imported Tickster events are stored as drafts.
+
+That means:
+
+- sync does not publish anything automatically
+- editors can publish one event at a time in Sanity Studio
+- you can publish all imported drafts with `tickster:publish-all-events`
+- you can move all published Tickster events back to drafts with `tickster:move-published-to-drafts`
+
+## Suggested Integration Flow
+
+1. Add the Tickster schema files to your Sanity project.
+2. Add the Tickster scripts to your repository.
+3. Add the required env vars.
+4. Run `npm run tickster:import-dump`.
+5. Review imported drafts in Studio.
+6. Publish the events you want live.
+7. Run `npm run tickster:sync-updates` on a schedule, for example once per hour.
+
+## Tickster Notes
+
+The dump import is used for the initial load.
+
+The hourly sync then uses Event API v1 to refresh the imported organizer events.
+
+The Tickster dump documentation says dumps are published around `07:00 UTC` and recommends waiting about one extra hour before consuming the new dump.

@@ -5,8 +5,8 @@ import dotenv from 'dotenv'
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url))
 const envCandidates = [
-  path.resolve(currentDirectory, '../../.env'),
   path.resolve(currentDirectory, '../../../.env'),
+  path.resolve(currentDirectory, '../../../../.env'),
 ]
 
 for (const envPath of envCandidates) {

@@ -65,15 +65,15 @@ export default async function Page() {
               {homePage?.eventsSectionLead ??
                 'Listan uppdateras från Tickster och visar de kommande Pustervik-event som finns synkade i Sanity.'}
             </p>
+            {events.length > 10 ? (
+              <div className="section-actions">
+                <Link className="button-secondary" href="/events">
+                  Se alla event
+                </Link>
+              </div>
+            ) : null}
           </div>
           <EventGrid events={featuredEvents} />
-          {events.length > 10 ? (
-            <div className="section-actions">
-              <Link className="button-secondary" href="/events">
-                Se alla event
-              </Link>
-            </div>
-          ) : null}
         </section>
       </div>
     </main>
